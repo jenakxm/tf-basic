@@ -13,6 +13,21 @@ resource "aws_db_instance" "example" {
   password = var.db_password
 }
 
+module "webserver_cluster" {
+  source = "../../../module/services/webserver-cluster"
+}
+
+resource "aws_security_group_rule" "allow_testing_inbound" {
+  type = "ingress"
+  security_group_id = module.webserver_cluster.alb_security_group_id
+  from_port = 12345
+  to_port = 12345
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+
+/*
 terraform {
   backend "s3" {
     bucket = "terraform-state-cloudwave-st04-mysql"
@@ -22,3 +37,4 @@ terraform {
     encrypt = true
   }
 }
+*/
